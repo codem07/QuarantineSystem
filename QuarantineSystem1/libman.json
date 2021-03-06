@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "defaultProvider": "unpkg",
+  "libraries": [
+    {
+      "library": "@react-google-maps/api@2.1.1",
+      "destination": "wwwroot/lib/react-google-maps/api/"
+    }
+  ]
+}

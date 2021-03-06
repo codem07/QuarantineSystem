@@ -1,0 +1,222 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Simple Map";
+  
+}
+
+<style type="text/css">
+    /* Always set the map height explicitly to define the size of the div
+        * element that contains the map. */
+    #map {
+        height: 1000px;
+            width: 2500px;
+    }
+
+   
+</style>
+<div class="row">
+    <div id="map"></div>
+    <script>
+        let map, infoWindow;
+
+        function initMap() {
+
+
+
+            var
+                contentCenter = '<span class="infowin">Center Marker (draggable)</span>',
+                contentA = '<span class="infowin">Marker A (draggable)</span>',
+                contentB = '<span class="infowin">Marker B (draggable)</span>';
+
+            var
+                latLngA = new google.maps.LatLng(22.2776, 71.17278),
+                latLngB = new google.maps.LatLng(21.6028789, 70.5391246);
+
+            //const myLatLng = {lat: 21.5333, lng: 70.4589  };
+
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 22.2587, lng: 71.1924 },
+                zoom: 15,
+            });
+            infoWindow = new google.maps.InfoWindow();
+            // const locationButton = document.createElement("button");
+            // locationButton.textContent = "select as quarantine area";
+            // locationButton.classList.add("custom-map-control-button");
+            // map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
+            //locationButton.addEventListener("click", () => {
+            // Try HTML5 geolocation.
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const latLngCenter = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+
+                        };
+
+
+                        // infoWindow.open(map);
+                        // map.setCenter(latLngCenter);
+                        map = new google.maps.Map(document.getElementById('map'), {
+                            zoom: 12,
+                            center: latLngCenter,
+                            mapTypeId: google.maps.MapTypeId.ROADMAP,
+                            mapTypeControl: false
+                        }),
+
+
+                            // const citymap = {
+                            //   home: {
+                            //     center: pos,
+                            //     population: 100,
+                            //   },
+
+                            // };
+
+
+
+                            // for (const city in citymap) {
+
+
+
+
+
+                            markerCenter = new google.maps.Marker({
+                                position: latLngCenter,
+                                title: 'Location',
+                                map: map,
+                                draggable: true
+                            }),
+                            infoCenter = new google.maps.InfoWindow({
+                                content: contentCenter
+                            }),
+                            markerA = new google.maps.Marker({
+                                position: latLngA,
+                                title: 'Location',
+                                map: map,
+                                draggable: true
+                            }),
+                            infoA = new google.maps.InfoWindow({
+                                content: contentA
+                            }),
+                            markerB = new google.maps.Marker({
+                                position: latLngB,
+                                title: 'Location',
+                                map: map,
+                                draggable: true
+                            }),
+                            infoB = new google.maps.InfoWindow({
+                                content: contentB
+                            })
+                        // Add the circle for this city to the map.
+                        circle = new google.maps.Circle({
+                            strokeColor: "#FF0000",
+                            strokeOpacity: 0.8,
+                            strokeWeight: 2,
+                            fillColor: "#FF0000",
+                            fillOpacity: 0.35,
+                            map,
+                            clickable: false,
+                            center: latLngCenter,
+                            radius: 1000,
+                        });
+
+
+
+                        circle.bindTo('center', markerCenter, 'position');
+
+
+                        // get the Bounds of the circle
+                        var bounds = circle.getBounds();
+
+
+                        google.maps.event.addListener(markerCenter, 'dragend', function () {
+                            latLngCenter = new google.maps.LatLng(markerCenter.position.lat(), markerCenter.position.lng());
+                            bounds = circle.getBounds();
+
+                        }),
+
+                            google.maps.event.addListener(markerA, 'dragend', function () {
+                                latLngA = new google.maps.LatLng(markerA.position.lat(), markerA.position.lng());
+                                if (bounds.contains(latLngA)) {
+                                    alert("a is inside");
+
+                                }
+                                else { alert("a is outside"); }
+
+                            }),
+
+                            google.maps.event.addListener(markerB, 'dragend', function () {
+                                latLngB = new google.maps.LatLng(markerB.position.lat(), markerB.position.lng());
+
+                                if (bounds.contains(latLngB)) {
+
+                                    alert("b is inside");
+                                }
+                                else {
+                                    alert("b is outside");
+
+                                }
+
+                            });
+
+
+
+                        // google.maps.event.addListener(markerCenter, 'click', function() {
+                        //   infoCenter.open(map, markerCenter);
+                        // });
+
+                        // google.maps.event.addListener(markerA, 'click', function() {
+                        //   infoA.open(map, markerA);
+                        // });
+
+                        // google.maps.event.addListener(markerB, 'click', function() {
+                        //   infoB.open(map, markerB);
+                        // });
+
+                        // google.maps.event.addListener(markerCenter, 'drag', function() {
+                        //   infoCenter.close();
+                        //   });
+
+                        // google.maps.event.addListener(markerA, 'drag', function() {
+                        //   infoA.close();
+
+                        // });
+
+                        // google.maps.event.addListener(markerB, 'drag', function() {
+                        //   infoB.close();
+                        //                                                    });
+
+
+
+
+
+
+                    },
+
+                );
+
+
+
+
+            }
+            ;
+        }
+
+        // )}// close button evnent
+
+        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(
+                browserHasGeolocation
+                    ? "Error: The Geolocation service failed."
+                    : "Error: Your browser doesn't support geolocation."
+            );
+            infoWindow.open(map);
+        }
+
+        </script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIwzALxUPNbatRBj3Xi1Uhp0fFzwWNBkE&callback=initMap&libraries=&v=weekly" async></script>
+            
+</div >
